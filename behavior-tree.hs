@@ -5,12 +5,24 @@ data Result = Running
             | Failure
               deriving (Show)
 
+-- composite nodes
 sequence' []    = Success
-sequence' tasks = case head tasks of
+sequence' nodes = case head nodes of
+                    Running -> Running
                     Failure -> Failure
-                    _       -> sequence' (tail tasks)
-              
-selector []     = Failure
-selector tasks  = case (head tasks) of
+                    _       -> sequence' (tail nodes)
+
+selector' []     = Failure
+selector' nodes  = case head nodes of
+                    Running -> Running
                     Success -> Success
-                    _       -> selector (tail tasks)
+                    _       -> selector' (tail nodes)
+
+-- decorator nodes
+not' Running = Running
+not' Failure = Success
+not' Success = Failure
+
+fail' _ = Failure
+
+succeed' _ = Success
